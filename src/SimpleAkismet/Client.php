@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleAkismet;
 
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 use SimpleAkismet\DataObject\Message;
@@ -26,16 +27,16 @@ class Client
     protected const RESPONSE_DEBUG_HEADER = 'X-akismet-debug-help';
     protected string $hostName;
     protected string $apiKey;
-    protected array $guzzleOptions = [];
+    protected ClientInterface $client;
 
     public function __construct(
         string $apiKey,
         string $hostName,
-        array $guzzleOptions = []
+        ClientInterface $client
     ) {
         $this->apiKey = $apiKey;
         $this->hostName = $hostName;
-        $this->guzzleOptions = $guzzleOptions;
+        $this->client = $client;
     }
 
     public function checkSpam(Message $message): bool
@@ -55,10 +56,16 @@ class Client
 
     public function verifyKey(): bool
     {
-        $client = $this->clientFactory();
-        $response = $client->post(
+        $client = $this->client;
+        $response = $client->request(
+            'POST',
             self::VERIFY_KEY_ENDPOINT,
             [
+                RequestOptions::HTTP_ERRORS => false,
+                RequestOptions::HEADERS => [
+                    self::HEADER_CONTENT_TYPE => self::CONTENT_TYPE,
+                    self::HEADER_USER_AGENT => self::USER_AGENT
+                ],
                 RequestOptions::FORM_PARAMS => [
                     'key' => $this->apiKey,
                     'blog' => $this->hostName
@@ -79,10 +86,15 @@ class Client
 
     protected function sendMessage(Message $message, string $endpoint, string $responseString): bool
     {
-        $client = $this->clientFactory();
-        $response = $client->post(
+        $response = $this->client->request(
+            'POST',
             sprintf($endpoint, $this->apiKey),
             [
+                RequestOptions::HTTP_ERRORS => false,
+                RequestOptions::HEADERS => [
+                    self::HEADER_CONTENT_TYPE => self::CONTENT_TYPE,
+                    self::HEADER_USER_AGENT => self::USER_AGENT
+                ],
                 RequestOptions::FORM_PARAMS => $message->toArray()
             ]
         );
@@ -102,21 +114,5 @@ class Client
             throw new AkismetException($errorMessage, $errorCode);
         }
         return false;
-    }
-
-    protected function clientFactory(): \GuzzleHttp\Client
-    {
-        return new \GuzzleHttp\Client(
-            array_merge(
-                $this->guzzleOptions,
-                [
-                    RequestOptions::HTTP_ERRORS => false,
-                    RequestOptions::HEADERS => [
-                        self::HEADER_CONTENT_TYPE => self::CONTENT_TYPE,
-                        self::HEADER_USER_AGENT => self::USER_AGENT
-                    ]
-                ]
-            )
-        );
     }
 }

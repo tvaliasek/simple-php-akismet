@@ -1,16 +1,19 @@
 {
-    "name": "tvaliasek/simple-php-akismet",
-    "description": "Simple class for check comment or contact form spam against Akismet API",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "tvaliasek",
-            "email": "tomas@valiasek.cz"
-        }
-    ],
-    "require": {
-        "php": "^7.4",
-        "guzzlehttp/guzzle": "^7.0"
+  "name": "tvaliasek/simple-php-akismet",
+  "description": "Simple class for check comment or contact form spam against Akismet API",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "tvaliasek",
+      "email": "tomas@valiasek.cz"
     }
+  ],
+  "require": {
+    "php": "^7.4"
+  },
+  "require-dev": {
+    "guzzlehttp/guzzle": "^7.0",
+    "phpunit/phpunit": "^9.3"
+  }
 }

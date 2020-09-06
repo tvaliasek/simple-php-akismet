@@ -5,13 +5,31 @@ namespace SimpleAkismet\DataObject;
 
 class Message
 {
-    public const MESSAGE_TYPE_COMMENT = 'comment';
-    public const MESSAGE_TYPE_FORUM_POST = 'forum-post';
-    public const MESSAGE_TYPE_REPLY = 'reply';
-    public const MESSAGE_TYPE_BLOG_POST = 'blog-post';
-    public const MESSAGE_TYPE_CONTACT_FORM = 'contact-form';
-    public const MESSAGE_TYPE_SIGNUP = 'signup';
-    public const MESSAGE_TYPE_MESSAGE = 'message';
+    public const MESSAGE_TYPE_COMMENT = 'comment',
+        MESSAGE_TYPE_FORUM_POST = 'forum-post',
+        MESSAGE_TYPE_REPLY = 'reply',
+        MESSAGE_TYPE_BLOG_POST = 'blog-post',
+        MESSAGE_TYPE_CONTACT_FORM = 'contact-form',
+        MESSAGE_TYPE_SIGNUP = 'signup',
+        MESSAGE_TYPE_MESSAGE = 'message';
+
+    public const FIELD_BLOG = 'blog',
+        FIELD_USER_IP = 'user_ip',
+        FIELD_USER_AGENT = 'user_agent',
+        FIELD_REFERRER = 'referrer',
+        FIELD_PERMALINK = 'permalink',
+        FIELD_COMMENT_TYPE = 'comment_type',
+        FIELD_COMMENT_AUTHOR = 'comment_author',
+        FIELD_COMMENT_AUTHOR_EMAIL = 'comment_author_email',
+        FIELD_COMMENT_AUTHOR_URL = 'comment_author_url',
+        FIELD_COMMENT_CONTENT = 'comment_content',
+        FIELD_COMMENT_DATE_GMT = 'comment_date_gmt',
+        FIELD_COMMENT_POST_MODIFIED_GMT = 'comment_post_modified_gmt',
+        FIELD_BLOG_LANG = 'blog_lang',
+        FIELD_BLOG_CHARSET = 'blog_charset',
+        FIELD_USER_ROLE = 'user_role',
+        FIELD_IS_TEST = 'is_test',
+        FIELD_RECHECK_REASON = 'recheck_reason';
 
     protected string $blog;
     protected string $userIp;
@@ -34,25 +52,23 @@ class Message
     public function toArray(): array
     {
         $values = [
-            'blog' => $this->getBlog(),
-            'user_ip' => $this->getUserIp(),
-            'user_agent' => $this->getUserAgent(),
-            'referrer' => $this->getReferrer(),
-            'permalink' => $this->getPermalink(),
-            'comment_type' => $this->getCommentType(),
-            'comment_author' => $this->getCommentAuthor(),
-            'comment_author_email' => $this->getCommentAuthorEmail(),
-            'comment_author_url' => $this->getCommentAuthorUrl(),
-            'comment_content' => $this->getCommentContent(),
-            'comment_date_gmt' => ($this->getCommentDateGmt() instanceof \DateTimeInterface) ? $this->getCommentDateGmt(
-            )->format('c') : null,
-            'comment_post_modified_gmt' => ($this->getCommentPostModifiedGmt(
-                ) instanceof \DateTimeInterface) ? $this->getCommentPostModifiedGmt()->format('c') : null,
-            'blog_lang' => $this->getBlogLang(),
-            'blog_charset' => $this->getBlogCharset(),
-            'user_role' => $this->getUserRole(),
-            'is_test' => $this->isTest() ? 'true' : 'false',
-            'recheck_reason' => $this->getRecheckReason()
+            self::FIELD_BLOG => $this->getBlog(),
+            self::FIELD_USER_IP => $this->getUserIp(),
+            self::FIELD_USER_AGENT => $this->getUserAgent(),
+            self::FIELD_REFERRER => $this->getReferrer(),
+            self::FIELD_PERMALINK => $this->getPermalink(),
+            self::FIELD_COMMENT_TYPE => $this->getCommentType(),
+            self::FIELD_COMMENT_AUTHOR => $this->getCommentAuthor(),
+            self::FIELD_COMMENT_AUTHOR_EMAIL => $this->getCommentAuthorEmail(),
+            self::FIELD_COMMENT_AUTHOR_URL => $this->getCommentAuthorUrl(),
+            self::FIELD_COMMENT_CONTENT => $this->getCommentContent(),
+            self::FIELD_COMMENT_DATE_GMT => ($this->getCommentDateGmt() instanceof \DateTimeInterface) ? $this->getCommentDateGmt()->format('c') : null,
+            self::FIELD_COMMENT_POST_MODIFIED_GMT => ($this->getCommentPostModifiedGmt() instanceof \DateTimeInterface) ? $this->getCommentPostModifiedGmt()->format('c') : null,
+            self::FIELD_BLOG_LANG => $this->getBlogLang(),
+            self::FIELD_BLOG_CHARSET => $this->getBlogCharset(),
+            self::FIELD_USER_ROLE => $this->getUserRole(),
+            self::FIELD_IS_TEST => $this->isTest() ? 'true' : 'false',
+            self::FIELD_RECHECK_REASON => $this->getRecheckReason()
         ];
         return array_filter(
             $values,
@@ -60,6 +76,63 @@ class Message
                 return !empty($item);
             }
         );
+    }
+
+    public static function fromArray(array $values): Message
+    {
+        $message = new Message();
+        if (key_exists(self::FIELD_BLOG, $values) && !empty($values[self::FIELD_BLOG])) {
+            $message->setBlog($values[self::FIELD_BLOG]);
+        }
+        if (key_exists(self::FIELD_USER_IP, $values) && !empty($values[self::FIELD_USER_IP])) {
+            $message->setUserIp($values[self::FIELD_USER_IP]);
+        }
+        if (key_exists(self::FIELD_USER_AGENT, $values) && !empty($values[self::FIELD_USER_AGENT])) {
+            $message->setUserAgent($values[self::FIELD_USER_IP]);
+        }
+        if (key_exists(self::FIELD_REFERRER, $values) && !empty($values[self::FIELD_REFERRER])) {
+            $message->setReferrer($values[self::FIELD_REFERRER]);
+        }
+        if (key_exists(self::FIELD_PERMALINK, $values) && !empty($values[self::FIELD_PERMALINK])) {
+            $message->setPermalink($values[self::FIELD_PERMALINK]);
+        }
+        if (key_exists(self::FIELD_COMMENT_TYPE, $values) && !empty($values[self::FIELD_COMMENT_TYPE])) {
+            $message->setCommentType($values[self::FIELD_COMMENT_TYPE]);
+        }
+        if (key_exists(self::FIELD_COMMENT_AUTHOR, $values) && !empty($values[self::FIELD_COMMENT_AUTHOR])) {
+            $message->setCommentAuthor($values[self::FIELD_COMMENT_AUTHOR]);
+        }
+        if (key_exists(self::FIELD_COMMENT_AUTHOR_EMAIL, $values) && !empty($values[self::FIELD_COMMENT_AUTHOR_EMAIL])) {
+            $message->setCommentAuthorEmail($values[self::FIELD_COMMENT_AUTHOR_EMAIL]);
+        }
+        if (key_exists(self::FIELD_COMMENT_AUTHOR_URL, $values) && !empty($values[self::FIELD_COMMENT_AUTHOR_URL])) {
+            $message->setCommentAuthorUrl($values[self::FIELD_COMMENT_AUTHOR_URL]);
+        }
+        if (key_exists(self::FIELD_COMMENT_CONTENT, $values) && !empty($values[self::FIELD_COMMENT_CONTENT])) {
+            $message->setCommentContent($values[self::FIELD_COMMENT_CONTENT]);
+        }
+        if (key_exists(self::FIELD_COMMENT_DATE_GMT, $values) && !empty($values[self::FIELD_COMMENT_DATE_GMT]) && $values[self::FIELD_COMMENT_DATE_GMT] instanceof \DateTimeInterface) {
+            $message->setCommentDateGmt($values[self::FIELD_COMMENT_DATE_GMT]);
+        }
+        if (key_exists(self::FIELD_COMMENT_POST_MODIFIED_GMT, $values) && !empty($values[self::FIELD_COMMENT_POST_MODIFIED_GMT]) && $values[self::FIELD_COMMENT_POST_MODIFIED_GMT] instanceof \DateTimeInterface) {
+            $message->setCommentPostModifiedGmt($values[self::FIELD_COMMENT_POST_MODIFIED_GMT]);
+        }
+        if (key_exists(self::FIELD_BLOG_LANG, $values) && !empty($values[self::FIELD_BLOG_LANG])) {
+            $message->setBlogLang($values[self::FIELD_BLOG_LANG]);
+        }
+        if (key_exists(self::FIELD_BLOG_CHARSET, $values) && !empty($values[self::FIELD_BLOG_CHARSET])) {
+            $message->setBlogCharset($values[self::FIELD_BLOG_CHARSET]);
+        }
+        if (key_exists(self::FIELD_USER_ROLE, $values) && !empty($values[self::FIELD_USER_ROLE])) {
+            $message->setUserRole($values[self::FIELD_USER_ROLE]);
+        }
+        if (key_exists(self::FIELD_IS_TEST, $values) && !empty($values[self::FIELD_IS_TEST])) {
+            $message->setIsTest($values[self::FIELD_IS_TEST]);
+        }
+        if (key_exists(self::FIELD_RECHECK_REASON, $values) && !empty($values[self::FIELD_RECHECK_REASON])) {
+            $message->setRecheckReason($values[self::FIELD_RECHECK_REASON]);
+        }
+        return $message;
     }
 
     /**
@@ -243,18 +316,18 @@ class Message
     }
 
     /**
-     * @return DateTimeInterface|null
+     * @return \DateTimeInterface|null
      */
-    public function getCommentDateGmt(): ?DateTimeInterface
+    public function getCommentDateGmt(): ?\DateTimeInterface
     {
         return $this->commentDateGmt;
     }
 
     /**
-     * @param DateTimeInterface|null $commentDateGmt
+     * @param \DateTimeInterface|null $commentDateGmt
      * @return Message
      */
-    public function setCommentDateGmt(?DateTimeInterface $commentDateGmt): Message
+    public function setCommentDateGmt(?\DateTimeInterface $commentDateGmt): Message
     {
         $this->commentDateGmt = $commentDateGmt;
         return $this;
