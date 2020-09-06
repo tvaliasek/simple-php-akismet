@@ -33,21 +33,21 @@ class Message
 
     protected string $blog;
     protected string $userIp;
-    protected ?string $userAgent;
-    protected ?string $referrer;
-    protected ?string $permalink;
-    protected ?string $commentType;
-    protected ?string $commentAuthor;
-    protected ?string $commentAuthorEmail;
-    protected ?string $commentAuthorUrl;
-    protected ?string $commentContent;
-    protected ?\DateTimeInterface $commentDateGmt;
-    protected ?\DateTimeInterface $commentPostModifiedGmt;
-    protected ?string $blogLang;
+    protected ?string $userAgent = null;
+    protected ?string $referrer = null;
+    protected ?string $permalink = null;
+    protected ?string $commentType = null;
+    protected ?string $commentAuthor = null;
+    protected ?string $commentAuthorEmail = null;
+    protected ?string $commentAuthorUrl = null;
+    protected ?string $commentContent = null;
+    protected ?\DateTimeInterface $commentDateGmt = null;
+    protected ?\DateTimeInterface $commentPostModifiedGmt = null;
+    protected ?string $blogLang = null;
     protected ?string $blogCharset = 'UTF-8';
-    protected ?string $userRole;
-    protected bool $isTest;
-    protected ?string $recheckReason;
+    protected ?string $userRole = null;
+    protected bool $isTest = false;
+    protected ?string $recheckReason = null;
 
     public function toArray(): array
     {
@@ -88,7 +88,7 @@ class Message
             $message->setUserIp($values[self::FIELD_USER_IP]);
         }
         if (key_exists(self::FIELD_USER_AGENT, $values) && !empty($values[self::FIELD_USER_AGENT])) {
-            $message->setUserAgent($values[self::FIELD_USER_IP]);
+            $message->setUserAgent($values[self::FIELD_USER_AGENT]);
         }
         if (key_exists(self::FIELD_REFERRER, $values) && !empty($values[self::FIELD_REFERRER])) {
             $message->setReferrer($values[self::FIELD_REFERRER]);

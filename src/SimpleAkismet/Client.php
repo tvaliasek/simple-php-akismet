@@ -12,6 +12,10 @@ use SimpleAkismet\Exception\AkismetException;
 use SimpleAkismet\Exception\InvalidKeyException;
 use SimpleAkismet\Exception\InvalidStatusCodeException;
 
+/**
+ * Class Client
+ * @package SimpleAkismet
+ */
 class Client
 {
     protected const USER_AGENT = 'PHP/SimplePHPAkismet';
@@ -39,21 +43,44 @@ class Client
         $this->client = $client;
     }
 
+    /**
+     * true if message is considered as spam
+     * @param Message $message
+     * @return bool
+     * @throws InvalidStatusCodeException
+     */
     public function checkSpam(Message $message): bool
     {
         return $this->sendMessage($message, self::CHECK_ENDPOINT, 'true');
     }
 
+    /**
+     * @param Message $message
+     * @return bool
+     * @throws InvalidStatusCodeException
+     */
     public function submitSpam(Message $message): bool
     {
         return $this->sendMessage($message, self::SUBMIT_SPAM_ENDPOINT, 'Thanks for making the web a better place.');
     }
 
+    /**
+     * @param Message $message
+     * @return bool
+     * @throws InvalidStatusCodeException
+     */
     public function submitHam(Message $message): bool
     {
         return $this->sendMessage($message, self::SUBMIT_HAM_ENDPOINT, 'Thanks for making the web a better place.');
     }
 
+    /**
+     * @return bool
+     * @throws AkismetException
+     * @throws InvalidKeyException
+     * @throws InvalidStatusCodeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function verifyKey(): bool
     {
         $client = $this->client;
@@ -84,6 +111,15 @@ class Client
         return true;
     }
 
+    /**
+     * @param Message $message
+     * @param string $endpoint
+     * @param string $responseString
+     * @return bool
+     * @throws AkismetException
+     * @throws InvalidStatusCodeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     protected function sendMessage(Message $message, string $endpoint, string $responseString): bool
     {
         $response = $this->client->request(
@@ -106,13 +142,19 @@ class Client
         return $body === $responseString;
     }
 
+    /**
+     * @param ResponseInterface $response
+     * @return bool
+     * @throws AkismetException
+     */
     protected function checkAkismetError(ResponseInterface $response): bool
     {
-        $errorCode = $response->getHeader(self::ERROR_CODE_HEADER) ?? null;
-        if ($errorCode !== null) {
-            $errorMessage = $response->getHeader(self::ERROR_MESSAGE_HEADER);
+        $errorCode = $response->getHeader(self::ERROR_CODE_HEADER);
+        if (!empty($errorCode) && is_array($errorCode) && !empty($errorCode[0])) {
+            $errorMessage = '' . ($response->getHeader(self::ERROR_MESSAGE_HEADER)[0] ?? $errorCode[0]);
             throw new AkismetException($errorMessage, $errorCode);
         }
         return false;
     }
+
 }
