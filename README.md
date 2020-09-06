@@ -1,13 +1,13 @@
-#Simple Akismet PHP client
+# Simple Akismet PHP client
 
 Very simple modern PHP implementation of Akismet spam check service.
 
-###Install
+### Install
 ```
 composer require tvaliasek/simple-php-akismet
 ```
 
-###Use
+### Use
 ``` php
 use SimpleAkismet\Client;
 use SimpleAkismet\DataObject\Message;
